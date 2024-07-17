@@ -122,7 +122,7 @@ const Cards = () => {
                 Vídeo
               </Typography>
               <Box sx={{ display: "flex", justifyContent: "center", gap: "10px", mb: 2 }}>
-                <Button variant="contained" onClick={() => handleLanguageChange("pt")}>
+                <Button variant="contained" onClick={() => handleLanguageChange("es")}>
                   Português
                 </Button>
                 <Button variant="contained" onClick={() => handleLanguageChange("es")}>
