@@ -14,17 +14,23 @@ import {
 
 const Cards = () => {
   const [open, setOpen] = useState(false);
-  const [videoSrc, setVideoSrc] = useState("");
-  const [language, setLanguage] = useState("pt");
+  const [currentCard, setCurrentCard] = useState(null);
 
-  const handleOpen = (videoUrl, lang) => {
-    setVideoSrc(videoUrl[lang]);
+  const handleOpen = (card) => {
+    setCurrentCard(card);
     setOpen(true);
   };
 
   const handleClose = () => {
     setOpen(false);
-    setVideoSrc("");
+    setCurrentCard(null);
+  };
+
+  const handleLanguageChange = (language) => {
+    setCurrentCard((prevCard) => ({
+      ...prevCard,
+      currentVideo: prevCard.video[language],
+    }));
   };
 
   const cards = [
@@ -35,6 +41,7 @@ const Cards = () => {
         pt: "https://www.youtube.com/embed/rcheCUpJLEQ",
         es: "https://www.youtube.com/embed/espanhol_video_url_urso",
       },
+      currentVideo: "https://www.youtube.com/embed/rcheCUpJLEQ",
     },
     {
       title: "Pirata",
@@ -43,6 +50,7 @@ const Cards = () => {
         pt: "https://www.youtube.com/embed/pXIOSb0YBbU",
         es: "https://www.youtube.com/embed/espanhol_video_url_pirata",
       },
+      currentVideo: "https://www.youtube.com/embed/pXIOSb0YBbU",
     },
     {
       title: "Jogador de Futebol",
@@ -51,6 +59,7 @@ const Cards = () => {
         pt: "https://www.youtube.com/embed/_9WNoFVdRas",
         es: "https://www.youtube.com/embed/espanhol_video_url_jogador",
       },
+      currentVideo: "https://www.youtube.com/embed/_9WNoFVdRas",
     },
     {
       title: "Empreendedor",
@@ -59,6 +68,7 @@ const Cards = () => {
         pt: "https://www.youtube.com/embed/2pZ-NqAs-MI",
         es: "https://www.youtube.com/embed/espanhol_video_url_empreendedor",
       },
+      currentVideo: "https://www.youtube.com/embed/2pZ-NqAs-MI",
     },
   ];
 
@@ -66,13 +76,13 @@ const Cards = () => {
     <div style={{ display: "flex", justifyContent: "space-around", flexWrap: "wrap", gap: "20px", padding: "20px" }}>
       {cards.map((card, index) => (
         <Card key={index} sx={{ width: 300, boxShadow: 6, borderRadius: "10px" }}>
-          <CardActionArea onClick={() => handleOpen(card.video, language)}>
+          <CardActionArea onClick={() => handleOpen(card)}>
             <CardMedia
               component="img"
               alt={card.title}
               image={card.image}
               title={card.title}
-              sx={{ height: 200, width: "90%", objectFit: "cover" }}
+              sx={{ height: 200, width: "92%", objectFit: "cover" }}
             />
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
@@ -83,55 +93,57 @@ const Cards = () => {
         </Card>
       ))}
 
-      <Modal
-        open={open}
-        onClose={handleClose}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={open}>
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "80%",
-              bgcolor: "background.paper",
-              borderRadius: "10px",
-              boxShadow: 24,
-              p: 4,
-              outline: "none",
-            }}
-          >
-            <Typography id="modal-title" variant="h6" component="h2">
-              Vídeo
-            </Typography>
-            <Box sx={{ display: "flex", justifyContent: "center", gap: "10px", mb: 2 }}>
-              <Button variant="contained" onClick={() => setLanguage("pt")}>
-                Português
-              </Button>
-              <Button variant="contained" onClick={() => setLanguage("es")}>
-                Espanhol
-              </Button>
+      {currentCard && (
+        <Modal
+          open={open}
+          onClose={handleClose}
+          closeAfterTransition
+          BackdropComponent={Backdrop}
+          BackdropProps={{
+            timeout: 500,
+          }}
+        >
+          <Fade in={open}>
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "80%",
+                bgcolor: "background.paper",
+                borderRadius: "10px",
+                boxShadow: 24,
+                p: 4,
+                outline: "none",
+              }}
+            >
+              <Typography id="modal-title" variant="h6" component="h2">
+                Vídeo
+              </Typography>
+              <Box sx={{ display: "flex", justifyContent: "center", gap: "10px", mb: 2 }}>
+                <Button variant="contained" onClick={() => handleLanguageChange("pt")}>
+                  Português
+                </Button>
+                <Button variant="contained" onClick={() => handleLanguageChange("es")}>
+                  Espanhol
+                </Button>
+              </Box>
+              <iframe
+                id="modal-description"
+                width="100%"
+                height="715"
+                src={currentCard.currentVideo}
+                title="Vídeo"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                style={{ borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}
+              />
             </Box>
-            <iframe
-              id="modal-description"
-              width="100%"
-              height="315"
-              src={videoSrc}
-              title="Vídeo"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              style={{ borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)" }}
-            />
-          </Box>
-        </Fade>
-      </Modal>
+          </Fade>
+        </Modal>
+      )}
     </div>
   );
 };
